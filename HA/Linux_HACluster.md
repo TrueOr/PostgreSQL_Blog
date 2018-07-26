@@ -55,6 +55,7 @@ TE（Transition Engine）： 就是来执行PE做出的策略的并且只有DC�
 ![](https://github.com/TrueOr/PostgreSQL_Blog/raw/master/HA/picture/130810130644553.png)  
 
 * 多节点共享存储（N-TO-N）
+有共享存储时，每个节点可能被用于故障转移。Pacemaker甚至可以运行多个服务。
 ![](https://github.com/TrueOr/PostgreSQL_Blog/raw/master/HA/picture/130810130644551.png)  
 
 * 共享存储热备 （Split Site）
