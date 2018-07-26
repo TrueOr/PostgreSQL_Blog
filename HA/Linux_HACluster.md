@@ -45,6 +45,23 @@ TE（Transition Engine）： 就是来执行PE做出的策略的并且只有DC�
   STONITH(Shoot The Other Node in the Head，”爆头“)， 这种方式直接操作电源开关，当一个节点发生故障时，另 一个节点如果能侦测到，就会通过网络发出命令，控制故障节点的电源开关，通过暂时断电，而又上电的方式使故障节点被重启动， 这种方式需要硬件支持。
   STONITH应用案例（主从服务器），主服务器在某一端时间由于服务繁忙，没时间响应心跳信息，如果这个时候备用服务器一下子把服务资源抢过去，但是这个时候主服务器还没有宕掉，这样就会导致资源抢占，就这样用户在主从服务器上都能访问，如果仅仅是读操作还没事，要是有写的操作，那就会导致文件系统崩溃，这样一切都玩了，所以在资源抢占的时候，可以采用一定的隔离方法来实现，就是备用服务器抢占资源的时候，直接把主服务器给STONITH，就是我们常说的”爆头 ”。
 
+#### 高可用集群的分类 
+* 双机热备（Active/Passive）
+许多高可用性的情况下，使用Pacemaker和DRBD的双节点主/从集群是一个符合成本效益的解决方案
+![](https://github.com/TrueOr/PostgreSQL_Blog/raw/master/HA/picture/130810130644552.png)  
+
+* 多节点热备（N+1）
+支持多少节点，Pacemaker可以显着降低硬件成本通过允许几个主/从群集要结合和共享一个公用备份节点。
+![](https://github.com/TrueOr/PostgreSQL_Blog/raw/master/HA/picture/130810130644553.png)  
+
+* 多节点共享存储（N-TO-N）
+![](https://github.com/TrueOr/PostgreSQL_Blog/raw/master/HA/picture/130810130644551.png)  
+
+* 共享存储热备 （Split Site）
+Pacemaker 1.2 将包括增强简化设立分站点集群
+![](https://github.com/TrueOr/PostgreSQL_Blog/raw/master/HA/picture/130810130644554.png)  
+
+
 #### 高可用集群软件
 Messaging and Membership Layer（信息与关系层）：
 * heartbeat (v1,v2,v3)，heartbeat v3 分拆  heartbeat pacemaker cluster-glue
@@ -65,3 +82,19 @@ Cluster Resource Manager Layer（资源管理层，简称:CRM）：
 * cman + rgmanager (说明：红帽集群套件中的组件，还包括gfs2,clvm)
 * keepalived+lvs (说明：常用于lvs的高可用)
 
+#### 共享存储
+说到集群， 我们不得不说到，共享存储，因为不管理是Web高可用也，Mysql高可用也好，他们的数据都是共享的就一份，所有必须放在共享存储中，主节点能访问，从节点也能访问。下面我们就简单说一下共享存储。<br>
+1.DAS:(Direct attached storage)直接附加存储<br>
+说明：设备直接连接到主机总线上的，距离有限，而且还要重新挂载，之间有数据传输有延时<br>
+`RAID 阵列`  `SCSI 阵列`<br>
+2.NAS:(network attached storage)网络附加存储 <br> 
+说明：文件级别的共享<br>
+`NFS` `FTP` `CIFS`<br>
+3.SAN:(storage area network)存储区域网络  <br>
+说明：块级别的，模拟的scsi协议<br>
+`FC光网络`（交换机的光接口超贵，一个差不多2万，如果使用这个，代价太高）<br>
+`IPSAN（iscsi）`存取快，块级别，廉价
+
+#### 集群文件系统与集群LVM（集群逻辑卷管理cLVM）
+集群文件系统：gfs2、ocfs2<br>
+集群LVM：cLVM<br>
