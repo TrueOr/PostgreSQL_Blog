@@ -31,7 +31,7 @@
 * 集群无关的组件（蓝色部分）。在Pacemaker架构中，这部分不仅包含有怎么样启动，关闭，监控资源的脚本，而且还有一个本地的守护进程来消除这些脚本实现的（采用的）不同标准之间的差异。
 * 大脑（绿色部分）处理并响应来自集群和资源的事件（比如节点的离开和加入，资源的失效），以及管理员对配置文件的修改。在对所有这些事件的响应中，Pacemaker会计算集群理想的状态，并规划一个途径来实现它。这个操作可能会包含移动资源，停止节点，甚至使用远程电源管理来强制使他们下线。
 ##### 详细架构
-![](https://github.com/TrueOr/PostgreSQL_Blog/raw/master/HA/picture/pacemaker_详细架构.png)<br>
+![](https://github.com/TrueOr/PostgreSQL_Blog/raw/master/HA/picture/pacemaker_详细架构.jpg)<br>
 * Pacemaker - 资源管理器(CRM)，负责启动和停止服务，而且保证它们是一直运行着的以及某个时刻某服务只在一个节点上运行（避免多服务同时操作数据造成的混乱）。
 * Corosync - 消息层组件（Messaging Layer），管理成员关系、消息和仲裁。
 * Resource Agents - 资源代理，实现在节点上接收 CRM 的调度对某一个资源进行管理的工具，这个管理的工具通常是脚本，所以我们通常称为资源代理。任何资源代理都要使用同一种风格，接收四个参数：{start|stop|restart|status}，包括配置IP地址的也是。每个种资源的代理都要完成这四个参数据的输出。Pacemaker 的 RA 可以分为三种：（1）Pacemaker 自己实现的 （2）第三方实现的，比如 RabbitMQ 的 RA （3）自己实现的，比如 OpenStack 实现的它的各种服务的RA，这是 mysql 的 RA。
